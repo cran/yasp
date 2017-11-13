@@ -1,0 +1,12 @@
+d32c2f57b409ca05fef046054d9e3cb9 *DESCRIPTION
+2b777104d3098a3b26e25d34ac366525 *LICENSE
+eed7609194dfd45f9a92f1acfa87b169 *NAMESPACE
+bb9a775f65be4daf3b7c3af7d336816a *R/paste.R
+0bd73988a76632c2d4d0d3c6918546f5 *R/sentence.R
+5174a73b0c94d9348eae1cce31caa2fb *R/unwrap.R
+f93e5fe5f0d0be92eb444ad2b031aeb3 *README.md
+28116b0d401023f76cfb88bbe12cc057 *man/paste-variants.Rd
+d7ac184187297a94158f365673e88d35 *man/sentence.Rd
+7aaee9c591f08cfd34c4cff14f5a32b0 *man/unwrap.Rd
+5f641580fb5349885c69ead0e6a1e739 *man/wrap.Rd
+840cb2cd9f4d798b74db81cd615e1929 *tests/Examples/yasp-Ex.Rout.save
