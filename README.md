@@ -1,4 +1,4 @@
-# yasp: Yet Another String Package
+# yasp: String Functions for Compact R Code
 
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/yasp)](https://cran.r-project.org/package=yasp)
 
@@ -7,33 +7,40 @@ in pure base `R` and has no dependancies. It includes:
 
 ### `paste` wrappers with short names and various defaults
 
-|             | mnemonic                  | `collapse=`| `sep=` |
-| :---------- | :------------------------ | :--------- | :----- |
-| `p()`       | paste                     | `NULL`     | `" "`  |
-| `p0()`      | paste0                    | `NULL`     | `""`   |
-| `pc()`      | paste collapse            | `""`       | `""`   |
-| `pcs()`     | paste collapse space      | `" "`      | `""`   |
-| `pcc()`     | paste collapse comma      | `", "`     | `""`   |
-| `pcsc()`    | paste collapse semicolon  | `"; "`     | `""`   |
-| `pcnl()`    | paste collapse newline    | `"\n"`     | `""`   |
-| `pc_and()`  | paste collapse and        | _varies_   | `""`   |
+|                 | mnemonic                  | `collapse=`| `sep=` |
+| :-------------- | :------------------------ | :--------- | :----- |
+| `p()`, `p0()`   | paste, paste0             | `NULL`     | `""`   |
+| `ps()`, `pss()` | paste (sep) space         | `NULL`     | `" "`  |
+| `psh()`         | paste sep hyphen          | `NULL`     | `"_"`  |
+| `psu()`         | paste sep underscore      | `NULL`     | `"-"`  |
+| `psnl()`        | paste sep newline         | `NULL`     | `"\n"` |
+| `pc()`          | paste collapse            | `""`       | `""`   |
+| `pcs()`         | paste collapse space      | `" "`      | `""`   |
+| `pcc()`         | paste collapse comma      | `", "`     | `""`   |
+| `pcsc()`        | paste collapse semicolon  | `"; "`     | `""`   |
+| `pcnl()`        | paste collapse newline    | `"\n"`     | `""`   |
+| `pc_and()`      | paste collapse and        | _varies_   | `""`   |
+| `pc_or()`       | paste collapse or         | _varies_   | `""`   |
 
-`pc_and` collapses vectors of length 3 or greater using a serial comma (aka, oxford comma)
-```
+`pc_and` and `pc_or` collapses vectors of length 3 or greater using a serial 
+comma (aka, oxford comma)
+``` r
 pc_and( letters[1:2] )  # "a and b"
 pc_and( letters[1:3] )  # "a, b, and c"
+pc_or( letters[1:2] )  # "a or b"
+pc_or( letters[1:3] )  # "a, b, or c"
 ```
 
 ### `wrap` and variants
 Wrap a string with some characters
-
-* `wrap("x", left = "", right = left)`
-* `dbl_quote("x")`  -->  `"\"x\""`
-* `sngl_quote("x")` --> `"'x'"`
-* `parens("x")`     -->     `"(x)"` 
-* `bracket("x")`    -->    `"[x]"`
-* `brace("x")`      -->    `"{x}"`
-
+```
+wrap("abc", "__")  #  __abc__
+dbl_quote("abc")   #   "abc"
+sngl_quote("abc")  #   'abc'
+parens("abc")      #   (abc)
+bracket("abc")     #   [abc]
+brace("abc")       #   {abc}
+```
 
 ### `unwrap`, `unparens`
 Remove pairs of characters from a string
@@ -55,7 +62,7 @@ data.frame( x, unparens(x), check.names = FALSE )
 #> 6 (a) (b)         a b
 ```
 specify `n_pairs` to remove a specific number of pairs
-```
+``` r
 x <- c("(a)", "((a))", "(((a)))", "(a) (b)", "(a) (b) (c)", "(a) (b) (c) (d)")
 data.frame( x, "n_pairs=1"   = unparens(x, n_pairs = 1),
                "n_pairs=2"   = unparens(x, n_pairs = 2),
@@ -72,13 +79,13 @@ data.frame( x, "n_pairs=1"   = unparens(x, n_pairs = 1),
 #> 6 (a) (b) (c) (d) a (b) (c) (d) a b (c) (d) a b c (d)     a b c d
 ```
 use `unwrap()` to specify any pair of characters for left and right
-```
+``` r
 x <- "A string with some \\emph{latex tags}."
 unwrap(x, "\\emph{", "}")
 #> [1] "A string with some latex tags."
 ```
 by default, only pairs are removed. Set a character to `""` to override.
-```
+``` r
 x <- c("a)", "a))", "(a", "((a" )
 data.frame(x, unparens(x), 'left=""' = unwrap(x, left = "", right = ")"),
            check.names = FALSE)
@@ -143,7 +150,11 @@ sentence(
 
 ## Installation
 
-You can install yasp from github with:
+You can install 'yasp' from CRAN with:
+``` r
+install.packages("yasp")
+```
+Or install from github with:
 
 ``` r
 # install.packages("devtools")

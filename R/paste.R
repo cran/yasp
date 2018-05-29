@@ -2,16 +2,21 @@
 #'
 #' Wrappers around \code{\link[base:paste]{base::paste}} with a variety of defaults:
 #' \tabular{llcc}{
-#'    \code{}         \tab \strong{mnemonic}         \tab \strong{\code{collapse=}} \tab \strong{\code{sep=}} \cr
-#'    \code{p()}      \tab paste                     \tab \code{NULL}               \tab \code{" "}   \cr
-#'    \code{p0()}     \tab paste0                    \tab \code{NULL}               \tab \code{""}    \cr
-#'    \code{pc()}     \tab paste collapse            \tab \code{""}                 \tab \code{""}    \cr
-#'    \code{pcs()}    \tab paste collapse space      \tab \code{" "}                \tab \code{""}    \cr
-#'    \code{pcc()}    \tab paste collapse comma      \tab \code{", "}               \tab \code{""}    \cr
-#'    \code{pcsc()}   \tab paste collapse semicolon  \tab \code{"; "}               \tab \code{""}    \cr
-#'    \code{pcnl()}   \tab paste collapse newline    \tab \code{"\n"}               \tab \code{""}    \cr
-#'    \code{pc_and()} \tab paste collapse and        \tab \emph{varies}             \tab \code{""}    \cr
+#'    \code{}                   \tab \strong{mnemonic}         \tab \strong{\code{collapse=}} \tab \strong{\code{sep=}} \cr
+#'    \code{p()}, \code{p0()}   \tab paste, paste0             \tab \code{NULL}               \tab \code{""}     \cr
+#'    \code{ps()}, \code{pss()} \tab paste (sep) space         \tab \code{NULL}               \tab \code{" "}    \cr
+#'    \code{psh()}              \tab paste sep hyphen          \tab \code{NULL}               \tab \code{"-"}    \cr
+#'    \code{psu()}              \tab paste sep underscore      \tab \code{NULL}               \tab \code{"_"}    \cr
+#'    \code{psnl()}             \tab paste sep newline         \tab \code{NULL}               \tab \code{"\n"}   \cr
+#'    \code{pc()}               \tab paste collapse            \tab \code{""}                 \tab \code{""}     \cr
+#'    \code{pcs()}              \tab paste collapse space      \tab \code{" "}                \tab \code{""}     \cr
+#'    \code{pcc()}              \tab paste collapse comma      \tab \code{", "}               \tab \code{""}     \cr
+#'    \code{pcsc()}             \tab paste collapse semicolon  \tab \code{"; "}               \tab \code{""}     \cr
+#'    \code{pcnl()}             \tab paste collapse newline    \tab \code{"\n"}               \tab \code{""}     \cr
+#'    \code{pc_and()}           \tab paste collapse and        \tab \emph{varies}             \tab \code{""}     \cr
+#'    \code{pc_or()}            \tab paste collapse or         \tab \emph{varies}             \tab \code{""}     \cr
 #' }
+#'
 #'
 #' @param ...,sep passed on to \code{\link[base:paste]{base::paste}}
 #' @export
@@ -33,11 +38,45 @@
 #' pcnl(x)
 #' pc_and(x[1:2])
 #' pc_and(x[1:3])
+#' pc_or(x[1:2])
+#' pc_or(x[1:3])
 #' pc_and(x, y)
 #' pc_and(x, y, sep = "-")
 #' pc_and(x[1])
 #' pc_and(x[0])
-p <- function(...) paste(...)
+p <- function(..., sep = "") paste(..., sep = sep)
+
+# paste space
+#' @export
+#' @rdname paste-variants
+ps <- function(...) paste(..., sep = " ")
+
+# paste sep space
+#' @export
+#' @rdname paste-variants
+pss <- ps
+
+# paste sep underscore
+#' @export
+#' @rdname paste-variants
+psu <- function(...) paste(..., sep = "_")
+
+# paste sep hyphen
+#' @export
+#' @rdname paste-variants
+psh <- function(...) paste(..., sep = "-")
+
+
+# paste sep newline
+#' @export
+#' @rdname paste-variants
+psnl <- function(...) paste(..., sep = "\n")
+
+
+# ? idea?
+# a fixed width table paste pst() paste sep tab (but an aware tab to make sure entries align...?)
+
+
 
 # paste0
 #' @export
@@ -55,27 +94,6 @@ pc <- function(..., sep = "")
 #' @rdname paste-variants
 pcs <- function(..., sep = "")
   paste(..., sep = sep, collapse = " ")
-
-## removing for now to keep the total number of exported function low
-#
-# ' # paste collapse underscore
-# ' #' @rdname paste-variants
-# ' #' @export
-# ' pcu <- function(..., sep = "")
-# '   paste(..., sep = sep, collapse = "_")
-#
-# ' # paste collapse dash
-# ' #' @rdname paste-variants
-# ' #' @export
-# ' pcd <- function(..., sep = "")
-# '   paste(..., sep = sep, collapse = "-")
-#
-## lines from documentation tables above and in README
-# '    \code{pcu()}    \tab paste collapse underscore \tab \code{"_"}                \tab \code{""}    \cr
-# | `pcu()`     | paste collapse underscore | `"_"`      | `""`   |
-#
-# ## from examples
-# # ' pcu(x)
 
 # paste collapse comma
 #' @rdname paste-variants
@@ -111,6 +129,22 @@ pc_and <- function(..., sep = "") {
     paste0( paste0(x[-lx], collapse = ", "), ", and ", x[lx])
 }
 
+# paste collapse or
+#' @rdname paste-variants
+#' @export
+pc_or <- function (..., sep = "") {
+  x <- paste(..., sep = sep, collapse = NULL)
+  lx <- length(x)
+  if (lx == 0L)
+    ""
+  else if (lx == 1L)
+    x
+  else if (lx == 2L)
+    paste0(x, collapse = " or ")
+  else paste0(paste0(x[-lx], collapse = ", "), ", or ", x[lx])
+}
+
+
 
 #' Wrap strings
 #'
@@ -118,7 +152,7 @@ pc_and <- function(..., sep = "") {
 #'
 #' @param x character to wrap
 #' @param left,right character pair to wrap with
-#' @param ... passed to \code{\link[base:paste]{base::paste}} before wrapping
+#' @param sep,... passed to \code{\link[base:paste]{base::paste}} before wrapping
 #'
 #' @rdname wrap
 #' @export
@@ -146,21 +180,21 @@ wrap <- function(x, left, right = left)
 
 #' @rdname wrap
 #' @export
-dbl_quote <- function(...) wrap(paste(...), '"')
+dbl_quote <- function(..., sep = "") wrap(paste(..., sep = sep), '"')
 
 #' @rdname wrap
 #' @export
-sngl_quote <- function(...) wrap(paste(...), "'")
+sngl_quote <- function(..., sep = "") wrap(paste(..., sep = sep), "'")
 
 #' @rdname wrap
 #' @export
-bracket <- function(...) wrap(paste(...), "[", "]")
+bracket <- function(..., sep = "") wrap(paste(..., sep = sep), "[", "]")
 
 #' @rdname wrap
 #' @export
-brace <- function(...) wrap(paste(...), "{", "}")
+brace <- function(..., sep = "") wrap(paste(..., sep = sep), "{", "}")
 
 #' @rdname wrap
 #' @export
-parens <- function(...) wrap(paste(...), "(", ")")
+parens <- function(..., sep = "") wrap(paste(..., sep = sep), "(", ")")
 
